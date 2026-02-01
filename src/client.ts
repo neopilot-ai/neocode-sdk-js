@@ -729,9 +729,7 @@ export class Neocode {
       ((typeof Symbol !== 'undefined' &&
         typeof Symbol.asyncIterator === 'symbol' &&
         Symbol.asyncIterator in body) ||
-        (typeof Symbol !== 'undefined' &&
-          typeof Symbol.iterator === 'symbol' &&
-          (Symbol.iterator in body || ('next' in body && typeof (body as any).next === 'function'))))
+        (typeof Symbol !== 'undefined' && typeof Symbol.iterator === 'symbol' && Symbol.iterator in body))
     ) {
       return { bodyHeaders: undefined, body: Shims.ReadableStreamFrom(body as AsyncIterable<Uint8Array>) };
     } else {
