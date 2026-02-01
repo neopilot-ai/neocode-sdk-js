@@ -173,7 +173,7 @@ export class Neocode {
   baseURL: string;
   maxRetries: number;
   timeout: number;
-  logger: Logger;
+  logger: Logger | undefined;
   logLevel: LogLevel | undefined;
   fetchOptions: MergedRequestInit | undefined;
 
@@ -408,7 +408,7 @@ export class Neocode {
     const response = await this.fetchWithTimeout(url, req, timeout, controller).catch(castToError);
     const headersTime = Date.now();
 
-    if (response instanceof globalThis.Error) {
+    if (response instanceof Error) {
       const retryMessage = `retrying, ${retriesRemaining} attempts remaining`;
       if (options.signal?.aborted) {
         throw new Errors.APIUserAbortError();
@@ -714,7 +714,7 @@ export class Neocode {
         // Preserve legacy string encoding behavior for now
         headers.values.has('content-type')) ||
       // `Blob` is superset of `File`
-      ((globalThis as any).Blob && body instanceof (globalThis as any).Blob) ||
+      body instanceof Blob ||
       // `FormData` -> `multipart/form-data`
       body instanceof FormData ||
       // `URLSearchParams` -> `application/x-www-form-urlencoded`
@@ -761,7 +761,6 @@ export class Neocode {
   session: API.SessionResource = new API.SessionResource(this);
   tui: API.Tui = new API.Tui(this);
 }
-
 Neocode.Event = Event;
 Neocode.AppResource = AppResource;
 Neocode.Find = Find;
@@ -769,7 +768,6 @@ Neocode.FileResource = FileResource;
 Neocode.ConfigResource = ConfigResource;
 Neocode.SessionResource = SessionResource;
 Neocode.Tui = Tui;
-
 export declare namespace Neocode {
   export type RequestOptions = Opts.RequestOptions;
 

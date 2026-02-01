@@ -1,11 +1,11 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import Neocode from '@neopilot/sdk';
+import Neocode from '@neocode-ai/sdk';
 
 const client = new Neocode({ baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010' });
 
 describe('resource file', () => {
-  // Prism tests are disabled
+  // skipped: tests are disabled for the time being
   test.skip('read: only required params', async () => {
     const responsePromise = client.file.read({ path: 'path' });
     const rawResponse = await responsePromise.asResponse();
@@ -17,12 +17,12 @@ describe('resource file', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // skipped: tests are disabled for the time being
   test.skip('read: required and optional params', async () => {
     const response = await client.file.read({ path: 'path' });
   });
 
-  // Prism tests are disabled
+  // skipped: tests are disabled for the time being
   test.skip('status', async () => {
     const responsePromise = client.file.status();
     const rawResponse = await responsePromise.asResponse();

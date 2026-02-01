@@ -1,10 +1,10 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import { APIPromise } from '@neopilot/sdk/core/api-promise';
+import { APIPromise } from '@neocode-ai/sdk/core/api-promise';
 
 import util from 'node:util';
-import Neocode from '@neopilot/sdk';
-import { APIUserAbortError } from '@neopilot/sdk';
+import Neocode from '@neocode-ai/sdk';
+import { APIUserAbortError } from '@neocode-ai/sdk';
 const defaultFetch = fetch;
 
 describe('instantiate client', () => {
@@ -180,10 +180,7 @@ describe('instantiate client', () => {
 
   describe('defaultQuery', () => {
     test('with null query params given', () => {
-      const client = new Neocode({
-        baseURL: 'http://localhost:5000/',
-        defaultQuery: { apiVersion: 'foo' },
-      });
+      const client = new Neocode({ baseURL: 'http://localhost:5000/', defaultQuery: { apiVersion: 'foo' } });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/foo?apiVersion=foo');
     });
 
@@ -196,10 +193,7 @@ describe('instantiate client', () => {
     });
 
     test('overriding with `undefined`', () => {
-      const client = new Neocode({
-        baseURL: 'http://localhost:5000/',
-        defaultQuery: { hello: 'world' },
-      });
+      const client = new Neocode({ baseURL: 'http://localhost:5000/', defaultQuery: { hello: 'world' } });
       expect(client.buildURL('/foo', { hello: undefined })).toEqual('http://localhost:5000/foo');
     });
   });

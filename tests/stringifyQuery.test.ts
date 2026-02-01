@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import { Neocode } from '@neopilot/sdk';
+import { Neocode } from '@neocode-ai/sdk';
 
 const { stringifyQuery } = Neocode.prototype as any;
 
