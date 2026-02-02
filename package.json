@@ -1,6 +1,6 @@
 {
   "name": "@neocode-ai/sdk",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "The official TypeScript library for the Neocode API",
   "author": "Neocode <support@khulnasoft.com>",
   "types": "dist/index.d.ts",
