@@ -1,18 +1,21 @@
 # Neocode TypeScript API Library
 
-[![NPM version](<https://img.shields.io/npm/v/@neocode-ai/sdk.svg?label=npm%20(stable)>)](https://npmjs.org/package/@neocode-ai/sdk) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/@neocode-ai/sdk)
+[![NPM version](<https://img.shields.io/npm/v/neocode.svg?label=npm%20(stable)>)](https://npmjs.org/package/neocode) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/neocode)
 
 This library provides convenient access to the Neocode REST API from server-side TypeScript or JavaScript.
 
-The REST API documentation can be found on [neocode.ai](https://neocode.ai/docs). The full API of this library can be found in [api.md](api.md).
+The full API of this library can be found in [api.md](api.md).
 
 It is generated with [Stainless](https://www.stainless.com/).
 
 ## Installation
 
 ```sh
-npm install @neocode-ai/sdk
+npm install git+ssh://git@github.com:neopilot-ai/neocode-sdk-js.git
 ```
+
+> [!NOTE]
+> Once this package is [published to npm](https://www.stainless.com/docs/guides/publish), this will become: `npm install neocode`
 
 ## Usage
 
@@ -20,30 +23,14 @@ The full API of this library can be found in [api.md](api.md).
 
 <!-- prettier-ignore -->
 ```js
-import Neocode from '@neocode-ai/sdk';
+import Neocode from 'neocode';
 
-const client = new Neocode();
+const client = new Neocode({
+  apiKey: process.env['NEOCODE_API_KEY'], // This is the default and can be omitted
+});
 
-const sessions = await client.session.list();
+const events = await client.event.list();
 ```
-
-## Streaming responses
-
-We provide support for streaming responses using Server Sent Events (SSE).
-
-```ts
-import Neocode from '@neocode-ai/sdk';
-
-const client = new Neocode();
-
-const stream = await client.event.list();
-for await (const eventListResponse of stream) {
-  console.log(eventListResponse);
-}
-```
-
-If you need to cancel a stream, you can `break` from the loop
-or call `stream.controller.abort()`.
 
 ### Request & Response types
 
@@ -51,11 +38,13 @@ This library includes TypeScript definitions for all request params and response
 
 <!-- prettier-ignore -->
 ```ts
-import Neocode from '@neocode-ai/sdk';
+import Neocode from 'neocode';
 
-const client = new Neocode();
+const client = new Neocode({
+  apiKey: process.env['NEOCODE_API_KEY'], // This is the default and can be omitted
+});
 
-const sessions: Neocode.SessionListResponse = await client.session.list();
+const events: Neocode.EventListResponse = await client.event.list();
 ```
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
@@ -68,7 +57,7 @@ a subclass of `APIError` will be thrown:
 
 <!-- prettier-ignore -->
 ```ts
-const sessions = await client.session.list().catch(async (err) => {
+const events = await client.event.list().catch(async (err) => {
   if (err instanceof Neocode.APIError) {
     console.log(err.status); // 400
     console.log(err.name); // BadRequestError
@@ -108,7 +97,7 @@ const client = new Neocode({
 });
 
 // Or, configure per-request:
-await client.session.list({
+await client.event.list({
   maxRetries: 5,
 });
 ```
@@ -125,7 +114,7 @@ const client = new Neocode({
 });
 
 // Override per-request:
-await client.session.list({
+await client.event.list({
   timeout: 5 * 1000,
 });
 ```
@@ -148,13 +137,13 @@ Unlike `.asResponse()` this method consumes the body, returning once it is parse
 ```ts
 const client = new Neocode();
 
-const response = await client.session.list().asResponse();
+const response = await client.event.list().asResponse();
 console.log(response.headers.get('X-My-Header'));
 console.log(response.statusText); // access the underlying Response object
 
-const { data: sessions, response: raw } = await client.session.list().withResponse();
+const { data: events, response: raw } = await client.event.list().withResponse();
 console.log(raw.headers.get('X-My-Header'));
-console.log(sessions);
+console.log(events);
 ```
 
 ### Logging
@@ -171,7 +160,7 @@ The log level can be configured in two ways:
 2. Using the `logLevel` client option (overrides the environment variable if set)
 
 ```ts
-import Neocode from '@neocode-ai/sdk';
+import Neocode from 'neocode';
 
 const client = new Neocode({
   logLevel: 'debug', // Show all log messages
@@ -199,7 +188,7 @@ When providing a custom logger, the `logLevel` option still controls which messa
 below the configured level will not be sent to your logger.
 
 ```ts
-import Neocode from '@neocode-ai/sdk';
+import Neocode from 'neocode';
 import pino from 'pino';
 
 const logger = pino();
@@ -234,7 +223,7 @@ parameter. This library doesn't validate at runtime that the request matches the
 send will be sent as-is.
 
 ```ts
-client.session.list({
+client.event.list({
   // ...
   // @ts-expect-error baz is not yet public
   baz: 'undocumented option',
@@ -268,7 +257,7 @@ globalThis.fetch = fetch;
 Or pass it to the client:
 
 ```ts
-import Neocode from '@neocode-ai/sdk';
+import Neocode from 'neocode';
 import fetch from 'my-fetch';
 
 const client = new Neocode({ fetch });
@@ -279,7 +268,7 @@ const client = new Neocode({ fetch });
 If you want to set custom `fetch` options without overriding the `fetch` function, you can provide a `fetchOptions` object when instantiating the client or making a request. (Request-specific options override client options.)
 
 ```ts
-import Neocode from '@neocode-ai/sdk';
+import Neocode from 'neocode';
 
 const client = new Neocode({
   fetchOptions: {
@@ -296,7 +285,7 @@ options to requests:
 <img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/node.svg" align="top" width="18" height="21"> **Node** <sup>[[docs](https://github.com/nodejs/undici/blob/main/docs/docs/api/ProxyAgent.md#example---proxyagent-with-fetch)]</sup>
 
 ```ts
-import Neocode from '@neocode-ai/sdk';
+import Neocode from 'neocode';
 import * as undici from 'undici';
 
 const proxyAgent = new undici.ProxyAgent('http://localhost:8888');
@@ -310,7 +299,7 @@ const client = new Neocode({
 <img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/bun.svg" align="top" width="18" height="21"> **Bun** <sup>[[docs](https://bun.sh/guides/http/proxy)]</sup>
 
 ```ts
-import Neocode from '@neocode-ai/sdk';
+import Neocode from 'neocode';
 
 const client = new Neocode({
   fetchOptions: {
@@ -322,7 +311,7 @@ const client = new Neocode({
 <img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/deno.svg" align="top" width="18" height="21"> **Deno** <sup>[[docs](https://docs.deno.com/api/deno/~/Deno.createHttpClient)]</sup>
 
 ```ts
-import Neocode from 'npm:@neocode-ai/sdk';
+import Neocode from 'npm:neocode';
 
 const httpClient = Deno.createHttpClient({ proxy: { url: 'http://localhost:8888' } });
 const client = new Neocode({

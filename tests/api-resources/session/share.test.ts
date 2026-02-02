@@ -7,10 +7,10 @@ const client = new Neocode({
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
-describe('resource tui', () => {
+describe('resource share', () => {
   // Prism tests are disabled
-  test.skip('appendPrompt: only required params', async () => {
-    const responsePromise = client.tui.appendPrompt({ text: 'text' });
+  test.skip('create', async () => {
+    const responsePromise = client.session.share.create('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -21,13 +21,8 @@ describe('resource tui', () => {
   });
 
   // Prism tests are disabled
-  test.skip('appendPrompt: required and optional params', async () => {
-    const response = await client.tui.appendPrompt({ text: 'text' });
-  });
-
-  // Prism tests are disabled
-  test.skip('openHelp', async () => {
-    const responsePromise = client.tui.openHelp();
+  test.skip('delete', async () => {
+    const responsePromise = client.session.share.delete('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;

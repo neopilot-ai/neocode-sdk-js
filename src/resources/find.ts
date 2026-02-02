@@ -1,90 +1,75 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as FindAPI from './find';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 
 export class Find extends APIResource {
   /**
+   * Find text in files
+   */
+  retrieve(query: FindRetrieveParams, options?: RequestOptions): APIPromise<FindRetrieveResponse> {
+    return this._client.get('/find', { query, ...options });
+  }
+
+  /**
    * Find files
    */
-  files(query: FindFilesParams, options?: RequestOptions): APIPromise<FindFilesResponse> {
+  retrieveFile(
+    query: FindRetrieveFileParams,
+    options?: RequestOptions,
+  ): APIPromise<FindRetrieveFileResponse> {
     return this._client.get('/find/file', { query, ...options });
   }
 
   /**
    * Find workspace symbols
    */
-  symbols(query: FindSymbolsParams, options?: RequestOptions): APIPromise<FindSymbolsResponse> {
+  retrieveSymbol(
+    query: FindRetrieveSymbolParams,
+    options?: RequestOptions,
+  ): APIPromise<FindRetrieveSymbolResponse> {
     return this._client.get('/find/symbol', { query, ...options });
   }
+}
 
-  /**
-   * Find text in files
-   */
-  text(query: FindTextParams, options?: RequestOptions): APIPromise<FindTextResponse> {
-    return this._client.get('/find', { query, ...options });
+export interface Range {
+  end: Range.End;
+
+  start: Range.Start;
+}
+
+export namespace Range {
+  export interface End {
+    character: number;
+
+    line: number;
+  }
+
+  export interface Start {
+    character: number;
+
+    line: number;
   }
 }
 
-export interface Symbol {
-  kind: number;
+export type FindRetrieveResponse = Array<FindRetrieveResponse.FindRetrieveResponseItem>;
 
-  location: Symbol.Location;
-
-  name: string;
-}
-
-export namespace Symbol {
-  export interface Location {
-    range: Location.Range;
-
-    uri: string;
-  }
-
-  export namespace Location {
-    export interface Range {
-      end: Range.End;
-
-      start: Range.Start;
-    }
-
-    export namespace Range {
-      export interface End {
-        character: number;
-
-        line: number;
-      }
-
-      export interface Start {
-        character: number;
-
-        line: number;
-      }
-    }
-  }
-}
-
-export type FindFilesResponse = Array<string>;
-
-export type FindSymbolsResponse = Array<Symbol>;
-
-export type FindTextResponse = Array<FindTextResponse.FindTextResponseItem>;
-
-export namespace FindTextResponse {
-  export interface FindTextResponseItem {
+export namespace FindRetrieveResponse {
+  export interface FindRetrieveResponseItem {
     absolute_offset: number;
 
     line_number: number;
 
-    lines: FindTextResponseItem.Lines;
+    lines: FindRetrieveResponseItem.Lines;
 
-    path: FindTextResponseItem.Path;
+    path: FindRetrieveResponseItem.Path;
 
-    submatches: Array<FindTextResponseItem.Submatch>;
+    submatches: Array<FindRetrieveResponseItem.Submatch>;
   }
 
-  export namespace FindTextResponseItem {
+  export namespace FindRetrieveResponseItem {
     export interface Lines {
       text: string;
     }
@@ -109,26 +94,48 @@ export namespace FindTextResponse {
   }
 }
 
-export interface FindFilesParams {
-  query: string;
+export type FindRetrieveFileResponse = Array<string>;
+
+export type FindRetrieveSymbolResponse = Array<FindRetrieveSymbolResponse.FindRetrieveSymbolResponseItem>;
+
+export namespace FindRetrieveSymbolResponse {
+  export interface FindRetrieveSymbolResponseItem {
+    kind: number;
+
+    location: FindRetrieveSymbolResponseItem.Location;
+
+    name: string;
+  }
+
+  export namespace FindRetrieveSymbolResponseItem {
+    export interface Location {
+      range: FindAPI.Range;
+
+      uri: string;
+    }
+  }
 }
 
-export interface FindSymbolsParams {
-  query: string;
-}
-
-export interface FindTextParams {
+export interface FindRetrieveParams {
   pattern: string;
+}
+
+export interface FindRetrieveFileParams {
+  query: string;
+}
+
+export interface FindRetrieveSymbolParams {
+  query: string;
 }
 
 export declare namespace Find {
   export {
-    type Symbol as Symbol,
-    type FindFilesResponse as FindFilesResponse,
-    type FindSymbolsResponse as FindSymbolsResponse,
-    type FindTextResponse as FindTextResponse,
-    type FindFilesParams as FindFilesParams,
-    type FindSymbolsParams as FindSymbolsParams,
-    type FindTextParams as FindTextParams,
+    type Range as Range,
+    type FindRetrieveResponse as FindRetrieveResponse,
+    type FindRetrieveFileResponse as FindRetrieveFileResponse,
+    type FindRetrieveSymbolResponse as FindRetrieveSymbolResponse,
+    type FindRetrieveParams as FindRetrieveParams,
+    type FindRetrieveFileParams as FindRetrieveFileParams,
+    type FindRetrieveSymbolParams as FindRetrieveSymbolParams,
   };
 }

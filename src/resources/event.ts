@@ -1,18 +1,17 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
-import * as SessionAPI from './session';
-import * as Shared from './shared';
+import * as MessageAPI from './session/message';
+import * as SessionAPI from './session/session';
 import { APIPromise } from '../core/api-promise';
-import { Stream } from '../core/streaming';
 import { RequestOptions } from '../internal/request-options';
 
 export class Event extends APIResource {
   /**
    * Get events
    */
-  list(options?: RequestOptions): APIPromise<Stream<EventListResponse>> {
-    return this._client.get('/event', { ...options, stream: true }) as APIPromise<Stream<EventListResponse>>;
+  list(options?: RequestOptions): APIPromise<EventListResponse> {
+    return this._client.get('/event', options);
   }
 }
 
@@ -30,6 +29,7 @@ export type EventListResponse =
   | EventListResponse.EventSessionDeleted
   | EventListResponse.EventSessionIdle
   | EventListResponse.EventSessionError
+  | EventListResponse.EventServerConnected
   | EventListResponse.EventFileWatcherUpdated
   | EventListResponse.EventIdeInstalled;
 
@@ -68,7 +68,7 @@ export namespace EventListResponse {
 
   export namespace EventMessageUpdated {
     export interface Properties {
-      info: SessionAPI.Message;
+      info: MessageAPI.Message;
     }
   }
 
@@ -94,7 +94,7 @@ export namespace EventListResponse {
 
   export namespace EventMessagePartUpdated {
     export interface Properties {
-      part: SessionAPI.Part;
+      part: MessageAPI.Part;
     }
   }
 
@@ -109,6 +109,8 @@ export namespace EventListResponse {
       messageID: string;
 
       partID: string;
+
+      sessionID: string;
     }
   }
 
@@ -209,21 +211,19 @@ export namespace EventListResponse {
   export namespace EventSessionError {
     export interface Properties {
       error?:
-        | Shared.ProviderAuthError
-        | Shared.UnknownError
-        | Properties.MessageOutputLengthError
-        | Shared.MessageAbortedError;
+        | MessageAPI.ProviderAuthError
+        | MessageAPI.UnknownError
+        | MessageAPI.OutputLengthError
+        | MessageAPI.AbortedError;
 
       sessionID?: string;
     }
+  }
 
-    export namespace Properties {
-      export interface MessageOutputLengthError {
-        data: unknown;
+  export interface EventServerConnected {
+    properties: unknown;
 
-        name: 'MessageOutputLengthError';
-      }
-    }
+    type: 'server.connected';
   }
 
   export interface EventFileWatcherUpdated {
