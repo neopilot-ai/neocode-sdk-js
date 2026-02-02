@@ -7,10 +7,10 @@ const client = new Neocode({
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
-describe('resource event', () => {
+describe('resource mode', () => {
   // Prism tests are disabled
   test.skip('list', async () => {
-    const responsePromise = client.event.list();
+    const responsePromise = client.mode.list();
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;

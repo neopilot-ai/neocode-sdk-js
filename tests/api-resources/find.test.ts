@@ -1,13 +1,16 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import Neocode from '@neopilot/sdk';
+import Neocode from 'neocode';
 
-const client = new Neocode({ baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010' });
+const client = new Neocode({
+  apiKey: 'My API Key',
+  baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
+});
 
 describe('resource find', () => {
   // Prism tests are disabled
-  test.skip('files: only required params', async () => {
-    const responsePromise = client.find.files({ query: 'query' });
+  test.skip('retrieve: only required params', async () => {
+    const responsePromise = client.find.retrieve({ pattern: 'pattern' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -18,13 +21,13 @@ describe('resource find', () => {
   });
 
   // Prism tests are disabled
-  test.skip('files: required and optional params', async () => {
-    const response = await client.find.files({ query: 'query' });
+  test.skip('retrieve: required and optional params', async () => {
+    const response = await client.find.retrieve({ pattern: 'pattern' });
   });
 
   // Prism tests are disabled
-  test.skip('symbols: only required params', async () => {
-    const responsePromise = client.find.symbols({ query: 'query' });
+  test.skip('retrieveFile: only required params', async () => {
+    const responsePromise = client.find.retrieveFile({ query: 'query' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -35,13 +38,13 @@ describe('resource find', () => {
   });
 
   // Prism tests are disabled
-  test.skip('symbols: required and optional params', async () => {
-    const response = await client.find.symbols({ query: 'query' });
+  test.skip('retrieveFile: required and optional params', async () => {
+    const response = await client.find.retrieveFile({ query: 'query' });
   });
 
   // Prism tests are disabled
-  test.skip('text: only required params', async () => {
-    const responsePromise = client.find.text({ pattern: 'pattern' });
+  test.skip('retrieveSymbol: only required params', async () => {
+    const responsePromise = client.find.retrieveSymbol({ query: 'query' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -52,7 +55,7 @@ describe('resource find', () => {
   });
 
   // Prism tests are disabled
-  test.skip('text: required and optional params', async () => {
-    const response = await client.find.text({ pattern: 'pattern' });
+  test.skip('retrieveSymbol: required and optional params', async () => {
+    const response = await client.find.retrieveSymbol({ query: 'query' });
   });
 });

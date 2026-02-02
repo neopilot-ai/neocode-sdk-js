@@ -8,8 +8,8 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "paths": {
-      "@neopilot/sdk/*": ["./src/*"],
-      "@neopilot/sdk": ["./src/index.ts"]
+      "neocode/*": ["./src/*"],
+      "neocode": ["./src/index.ts"]
     },
     "noEmit": true,
 

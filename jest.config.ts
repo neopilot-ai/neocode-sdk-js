@@ -7,8 +7,8 @@ const config: JestConfigWithTsJest = {
     '^.+\\.(t|j)sx?$': ['@swc/jest', { sourceMaps: 'inline' }],
   },
   moduleNameMapper: {
-    '^@neopilot/sdk$': '<rootDir>/src/index.ts',
-    '^@neopilot/sdk/(.*)$': '<rootDir>/src/$1',
+    '^neocode$': '<rootDir>/src/index.ts',
+    '^neocode/(.*)$': '<rootDir>/src/$1',
   },
   modulePathIgnorePatterns: [
     '<rootDir>/ecosystem-tests/',

@@ -1,13 +1,16 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import Neocode from '@neopilot/sdk';
+import Neocode from 'neocode';
 
-const client = new Neocode({ baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010' });
+const client = new Neocode({
+  apiKey: 'My API Key',
+  baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
+});
 
 describe('resource app', () => {
   // Prism tests are disabled
-  test.skip('get', async () => {
-    const responsePromise = client.app.get();
+  test.skip('retrieve', async () => {
+    const responsePromise = client.app.retrieve();
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -18,58 +21,8 @@ describe('resource app', () => {
   });
 
   // Prism tests are disabled
-  test.skip('init', async () => {
-    const responsePromise = client.app.init();
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Prism tests are disabled
-  test.skip('log: only required params', async () => {
-    const responsePromise = client.app.log({
-      level: 'debug',
-      message: 'message',
-      service: 'service',
-    });
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Prism tests are disabled
-  test.skip('log: required and optional params', async () => {
-    const response = await client.app.log({
-      level: 'debug',
-      message: 'message',
-      service: 'service',
-      extra: { foo: 'bar' },
-    });
-  });
-
-  // Prism tests are disabled
-  test.skip('modes', async () => {
-    const responsePromise = client.app.modes();
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Prism tests are disabled
-  test.skip('providers', async () => {
-    const responsePromise = client.app.providers();
+  test.skip('initialize', async () => {
+    const responsePromise = client.app.initialize();
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
