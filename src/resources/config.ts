@@ -5,25 +5,44 @@ import * as ConfigAPI from './config';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 
-export class ConfigResource extends APIResource {
+export class Config extends APIResource {
   /**
    * Get config info
    */
-  get(options?: RequestOptions): APIPromise<Config> {
+  retrieve(options?: RequestOptions): APIPromise<ConfigRetrieveResponse> {
     return this._client.get('/config', options);
+  }
+
+  /**
+   * List all providers
+   */
+  listProviders(options?: RequestOptions): APIPromise<ConfigListProvidersResponse> {
+    return this._client.get('/config/providers', options);
   }
 }
 
-export interface Config {
+export interface ModeConfig {
+  disable?: boolean;
+
+  model?: string;
+
+  prompt?: string;
+
+  temperature?: number;
+
+  tools?: { [key: string]: boolean };
+}
+
+export interface ConfigRetrieveResponse {
   /**
    * JSON schema reference for configuration validation
    */
   $schema?: string;
 
   /**
-   * Modes configuration, see https://neocode.ai/docs/modes
+   * Modes configuration, see https://neo.khulnasoft.com/docs/modes
    */
-  agent?: Config.Agent;
+  agent?: ConfigRetrieveResponse.Agent;
 
   /**
    * @deprecated Use 'share' field instead. Share newly created sessions
@@ -41,7 +60,7 @@ export interface Config {
    */
   disabled_providers?: Array<string>;
 
-  experimental?: Config.Experimental;
+  experimental?: ConfigRetrieveResponse.Experimental;
 
   /**
    * Additional instruction files or patterns to include
@@ -51,7 +70,7 @@ export interface Config {
   /**
    * Custom keybind configurations
    */
-  keybinds?: KeybindsConfig;
+  keybinds?: ConfigRetrieveResponse.Keybinds;
 
   /**
    * @deprecated Always uses stretch layout.
@@ -61,12 +80,12 @@ export interface Config {
   /**
    * MCP (Model Context Protocol) server configurations
    */
-  mcp?: { [key: string]: McpLocalConfig | McpRemoteConfig };
+  mcp?: { [key: string]: ConfigRetrieveResponse.McpLocalConfig | ConfigRetrieveResponse.McpRemoteConfig };
 
   /**
-   * Modes configuration, see https://neocode.ai/docs/modes
+   * Modes configuration, see https://neo.khulnasoft.com/docs/modes
    */
-  mode?: Config.Mode;
+  mode?: ConfigRetrieveResponse.Mode;
 
   /**
    * Model to use in the format of provider/model, eg anthropic/claude-2
@@ -76,7 +95,7 @@ export interface Config {
   /**
    * Custom provider configurations and model overrides
    */
-  provider?: { [key: string]: Config.Provider };
+  provider?: { [key: string]: ConfigRetrieveResponse.Provider };
 
   /**
    * Control sharing behavior:'manual' allows manual sharing via commands, 'auto'
@@ -101,9 +120,9 @@ export interface Config {
   username?: string;
 }
 
-export namespace Config {
+export namespace ConfigRetrieveResponse {
   /**
-   * Modes configuration, see https://neocode.ai/docs/modes
+   * Modes configuration, see https://neo.khulnasoft.com/docs/modes
    */
   export interface Agent {
     general?: Agent.General;
@@ -156,7 +175,246 @@ export namespace Config {
   }
 
   /**
-   * Modes configuration, see https://neocode.ai/docs/modes
+   * Custom keybind configurations
+   */
+  export interface Keybinds {
+    /**
+     * Exit the application
+     */
+    app_exit: string;
+
+    /**
+     * Show help dialog
+     */
+    app_help: string;
+
+    /**
+     * Open external editor
+     */
+    editor_open: string;
+
+    /**
+     * Close file
+     */
+    file_close: string;
+
+    /**
+     * Split/unified diff
+     */
+    file_diff_toggle: string;
+
+    /**
+     * List files
+     */
+    file_list: string;
+
+    /**
+     * Search file
+     */
+    file_search: string;
+
+    /**
+     * Clear input field
+     */
+    input_clear: string;
+
+    /**
+     * Insert newline in input
+     */
+    input_newline: string;
+
+    /**
+     * Paste from clipboard
+     */
+    input_paste: string;
+
+    /**
+     * Submit input
+     */
+    input_submit: string;
+
+    /**
+     * Leader key for keybind combinations
+     */
+    leader: string;
+
+    /**
+     * Copy message
+     */
+    messages_copy: string;
+
+    /**
+     * Navigate to first message
+     */
+    messages_first: string;
+
+    /**
+     * Scroll messages down by half page
+     */
+    messages_half_page_down: string;
+
+    /**
+     * Scroll messages up by half page
+     */
+    messages_half_page_up: string;
+
+    /**
+     * Navigate to last message
+     */
+    messages_last: string;
+
+    /**
+     * Toggle layout
+     */
+    messages_layout_toggle: string;
+
+    /**
+     * Navigate to next message
+     */
+    messages_next: string;
+
+    /**
+     * Scroll messages down by one page
+     */
+    messages_page_down: string;
+
+    /**
+     * Scroll messages up by one page
+     */
+    messages_page_up: string;
+
+    /**
+     * Navigate to previous message
+     */
+    messages_previous: string;
+
+    /**
+     * Redo message
+     */
+    messages_redo: string;
+
+    /**
+     * @deprecated use messages_undo. Revert message
+     */
+    messages_revert: string;
+
+    /**
+     * Undo message
+     */
+    messages_undo: string;
+
+    /**
+     * List available models
+     */
+    model_list: string;
+
+    /**
+     * Create/update AGENTS.md
+     */
+    project_init: string;
+
+    /**
+     * Compact the session
+     */
+    session_compact: string;
+
+    /**
+     * Export session to editor
+     */
+    session_export: string;
+
+    /**
+     * Interrupt current session
+     */
+    session_interrupt: string;
+
+    /**
+     * List all sessions
+     */
+    session_list: string;
+
+    /**
+     * Create a new session
+     */
+    session_new: string;
+
+    /**
+     * Share current session
+     */
+    session_share: string;
+
+    /**
+     * Unshare current session
+     */
+    session_unshare: string;
+
+    /**
+     * Next mode
+     */
+    switch_mode: string;
+
+    /**
+     * Previous Mode
+     */
+    switch_mode_reverse: string;
+
+    /**
+     * List available themes
+     */
+    theme_list: string;
+
+    /**
+     * Toggle tool details
+     */
+    tool_details: string;
+  }
+
+  export interface McpLocalConfig {
+    /**
+     * Command and arguments to run the MCP server
+     */
+    command: Array<string>;
+
+    /**
+     * Type of MCP server connection
+     */
+    type: 'local';
+
+    /**
+     * Enable or disable the MCP server on startup
+     */
+    enabled?: boolean;
+
+    /**
+     * Environment variables to set when running the MCP server
+     */
+    environment?: { [key: string]: string };
+  }
+
+  export interface McpRemoteConfig {
+    /**
+     * Type of MCP server connection
+     */
+    type: 'remote';
+
+    /**
+     * URL of the remote MCP server
+     */
+    url: string;
+
+    /**
+     * Enable or disable the MCP server on startup
+     */
+    enabled?: boolean;
+
+    /**
+     * Headers to send with the request
+     */
+    headers?: { [key: string]: string };
+  }
+
+  /**
+   * Modes configuration, see https://neo.khulnasoft.com/docs/modes
    */
   export interface Mode {
     build?: ConfigAPI.ModeConfig;
@@ -233,260 +491,74 @@ export namespace Config {
   }
 }
 
-export interface KeybindsConfig {
-  /**
-   * Exit the application
-   */
-  app_exit: string;
+export interface ConfigListProvidersResponse {
+  default: { [key: string]: string };
 
-  /**
-   * Show help dialog
-   */
-  app_help: string;
-
-  /**
-   * Open external editor
-   */
-  editor_open: string;
-
-  /**
-   * Close file
-   */
-  file_close: string;
-
-  /**
-   * Split/unified diff
-   */
-  file_diff_toggle: string;
-
-  /**
-   * List files
-   */
-  file_list: string;
-
-  /**
-   * Search file
-   */
-  file_search: string;
-
-  /**
-   * Clear input field
-   */
-  input_clear: string;
-
-  /**
-   * Insert newline in input
-   */
-  input_newline: string;
-
-  /**
-   * Paste from clipboard
-   */
-  input_paste: string;
-
-  /**
-   * Submit input
-   */
-  input_submit: string;
-
-  /**
-   * Leader key for keybind combinations
-   */
-  leader: string;
-
-  /**
-   * Copy message
-   */
-  messages_copy: string;
-
-  /**
-   * Navigate to first message
-   */
-  messages_first: string;
-
-  /**
-   * Scroll messages down by half page
-   */
-  messages_half_page_down: string;
-
-  /**
-   * Scroll messages up by half page
-   */
-  messages_half_page_up: string;
-
-  /**
-   * Navigate to last message
-   */
-  messages_last: string;
-
-  /**
-   * Toggle layout
-   */
-  messages_layout_toggle: string;
-
-  /**
-   * Navigate to next message
-   */
-  messages_next: string;
-
-  /**
-   * Scroll messages down by one page
-   */
-  messages_page_down: string;
-
-  /**
-   * Scroll messages up by one page
-   */
-  messages_page_up: string;
-
-  /**
-   * Navigate to previous message
-   */
-  messages_previous: string;
-
-  /**
-   * Redo message
-   */
-  messages_redo: string;
-
-  /**
-   * @deprecated use messages_undo. Revert message
-   */
-  messages_revert: string;
-
-  /**
-   * Undo message
-   */
-  messages_undo: string;
-
-  /**
-   * List available models
-   */
-  model_list: string;
-
-  /**
-   * Create/update AGENTS.md
-   */
-  project_init: string;
-
-  /**
-   * Compact the session
-   */
-  session_compact: string;
-
-  /**
-   * Export session to editor
-   */
-  session_export: string;
-
-  /**
-   * Interrupt current session
-   */
-  session_interrupt: string;
-
-  /**
-   * List all sessions
-   */
-  session_list: string;
-
-  /**
-   * Create a new session
-   */
-  session_new: string;
-
-  /**
-   * Share current session
-   */
-  session_share: string;
-
-  /**
-   * Unshare current session
-   */
-  session_unshare: string;
-
-  /**
-   * Next mode
-   */
-  switch_mode: string;
-
-  /**
-   * Previous Mode
-   */
-  switch_mode_reverse: string;
-
-  /**
-   * List available themes
-   */
-  theme_list: string;
-
-  /**
-   * Toggle tool details
-   */
-  tool_details: string;
+  providers: Array<ConfigListProvidersResponse.Provider>;
 }
 
-export interface McpLocalConfig {
-  /**
-   * Command and arguments to run the MCP server
-   */
-  command: Array<string>;
+export namespace ConfigListProvidersResponse {
+  export interface Provider {
+    id: string;
 
-  /**
-   * Type of MCP server connection
-   */
-  type: 'local';
+    env: Array<string>;
 
-  /**
-   * Enable or disable the MCP server on startup
-   */
-  enabled?: boolean;
+    models: { [key: string]: Provider.Models };
 
-  /**
-   * Environment variables to set when running the MCP server
-   */
-  environment?: { [key: string]: string };
+    name: string;
+
+    api?: string;
+
+    npm?: string;
+  }
+
+  export namespace Provider {
+    export interface Models {
+      id: string;
+
+      attachment: boolean;
+
+      cost: Models.Cost;
+
+      limit: Models.Limit;
+
+      name: string;
+
+      options: { [key: string]: unknown };
+
+      reasoning: boolean;
+
+      release_date: string;
+
+      temperature: boolean;
+
+      tool_call: boolean;
+    }
+
+    export namespace Models {
+      export interface Cost {
+        input: number;
+
+        output: number;
+
+        cache_read?: number;
+
+        cache_write?: number;
+      }
+
+      export interface Limit {
+        context: number;
+
+        output: number;
+      }
+    }
+  }
 }
 
-export interface McpRemoteConfig {
-  /**
-   * Type of MCP server connection
-   */
-  type: 'remote';
-
-  /**
-   * URL of the remote MCP server
-   */
-  url: string;
-
-  /**
-   * Enable or disable the MCP server on startup
-   */
-  enabled?: boolean;
-
-  /**
-   * Headers to send with the request
-   */
-  headers?: { [key: string]: string };
-}
-
-export interface ModeConfig {
-  disable?: boolean;
-
-  model?: string;
-
-  prompt?: string;
-
-  temperature?: number;
-
-  tools?: { [key: string]: boolean };
-}
-
-export declare namespace ConfigResource {
+export declare namespace Config {
   export {
-    type Config as Config,
-    type KeybindsConfig as KeybindsConfig,
-    type McpLocalConfig as McpLocalConfig,
-    type McpRemoteConfig as McpRemoteConfig,
     type ModeConfig as ModeConfig,
+    type ConfigRetrieveResponse as ConfigRetrieveResponse,
+    type ConfigListProvidersResponse as ConfigListProvidersResponse,
   };
 }

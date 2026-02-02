@@ -16,73 +16,35 @@ import * as Errors from './core/error';
 import * as Uploads from './core/uploads';
 import * as API from './resources/index';
 import { APIPromise } from './core/api-promise';
-import {
-  App,
-  AppInitResponse,
-  AppLogParams,
-  AppLogResponse,
-  AppModesResponse,
-  AppProvidersResponse,
-  AppResource,
-  Mode,
-  Model,
-  Provider,
-} from './resources/app';
-import {
-  Config,
-  ConfigResource,
-  KeybindsConfig,
-  McpLocalConfig,
-  McpRemoteConfig,
-  ModeConfig,
-} from './resources/config';
+import { App, AppInitializeResponse, AppRetrieveResponse } from './resources/app';
+import { Config, ConfigListProvidersResponse, ConfigRetrieveResponse, ModeConfig } from './resources/config';
 import { Event, EventListResponse } from './resources/event';
-import { File, FileReadParams, FileReadResponse, FileResource, FileStatusResponse } from './resources/file';
+import { File, FileRetrieveParams, FileRetrieveResponse, FileRetrieveStatusResponse } from './resources/file';
 import {
   Find,
-  FindFilesParams,
-  FindFilesResponse,
-  FindSymbolsParams,
-  FindSymbolsResponse,
-  FindTextParams,
-  FindTextResponse,
-  Symbol,
+  FindRetrieveFileParams,
+  FindRetrieveFileResponse,
+  FindRetrieveParams,
+  FindRetrieveResponse,
+  FindRetrieveSymbolParams,
+  FindRetrieveSymbolResponse,
+  Range,
 } from './resources/find';
+import { Log, LogCreateParams, LogCreateResponse } from './resources/log';
+import { Mode, ModeListResponse } from './resources/mode';
+import { Tui, TuiAppendPromptParams, TuiAppendPromptResponse, TuiOpenHelpResponse } from './resources/tui';
 import {
-  AssistantMessage,
-  FilePart,
-  FilePartInput,
-  FilePartSource,
-  FilePartSourceText,
-  FileSource,
-  Message,
-  Part,
   Session,
   SessionAbortResponse,
-  SessionChatParams,
   SessionDeleteResponse,
   SessionInitParams,
   SessionInitResponse,
   SessionListResponse,
-  SessionMessagesResponse,
   SessionResource,
   SessionRevertParams,
   SessionSummarizeParams,
   SessionSummarizeResponse,
-  SnapshotPart,
-  StepFinishPart,
-  StepStartPart,
-  SymbolSource,
-  TextPart,
-  TextPartInput,
-  ToolPart,
-  ToolStateCompleted,
-  ToolStateError,
-  ToolStatePending,
-  ToolStateRunning,
-  UserMessage,
-} from './resources/session';
-import { Tui, TuiAppendPromptParams, TuiAppendPromptResponse, TuiOpenHelpResponse } from './resources/tui';
+} from './resources/session/session';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
 import { FinalRequestOptions, RequestOptions } from './internal/request-options';
@@ -97,6 +59,11 @@ import {
 import { isEmptyObj } from './internal/utils/values';
 
 export interface ClientOptions {
+  /**
+   * Defaults to process.env['NEOCODE_API_KEY'].
+   */
+  apiKey?: string | null | undefined;
+
   /**
    * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
    *
@@ -170,10 +137,12 @@ export interface ClientOptions {
  * API Client for interfacing with the Neocode API.
  */
 export class Neocode {
+  apiKey: string | null;
+
   baseURL: string;
   maxRetries: number;
   timeout: number;
-  logger: Logger | undefined;
+  logger: Logger;
   logLevel: LogLevel | undefined;
   fetchOptions: MergedRequestInit | undefined;
 
@@ -185,7 +154,8 @@ export class Neocode {
   /**
    * API Client for interfacing with the Neocode API.
    *
-   * @param {string} [opts.baseURL=process.env['NEOCODE_BASE_URL'] ?? http://localhost:54321] - Override the default base URL for the API.
+   * @param {string | null | undefined} [opts.apiKey=process.env['NEOCODE_API_KEY'] ?? null]
+   * @param {string} [opts.baseURL=process.env['NEOCODE_BASE_URL'] ?? https://api.example.com] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
    * @param {Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
@@ -193,10 +163,15 @@ export class Neocode {
    * @param {HeadersLike} opts.defaultHeaders - Default headers to include with every request to the API.
    * @param {Record<string, string | undefined>} opts.defaultQuery - Default query parameters to include with every request to the API.
    */
-  constructor({ baseURL = readEnv('NEOCODE_BASE_URL'), ...opts }: ClientOptions = {}) {
+  constructor({
+    baseURL = readEnv('NEOCODE_BASE_URL'),
+    apiKey = readEnv('NEOCODE_API_KEY') ?? null,
+    ...opts
+  }: ClientOptions = {}) {
     const options: ClientOptions = {
+      apiKey,
       ...opts,
-      baseURL: baseURL || `http://localhost:54321`,
+      baseURL: baseURL || `https://api.example.com`,
     };
 
     this.baseURL = options.baseURL!;
@@ -215,6 +190,8 @@ export class Neocode {
     this.#encoder = Opts.FallbackEncoder;
 
     this._options = options;
+
+    this.apiKey = apiKey;
   }
 
   /**
@@ -230,6 +207,7 @@ export class Neocode {
       logLevel: this.logLevel,
       fetch: this.fetch,
       fetchOptions: this.fetchOptions,
+      apiKey: this.apiKey,
       ...options,
     });
     return client;
@@ -239,7 +217,7 @@ export class Neocode {
    * Check whether the base URL is set to its default.
    */
   #baseURLOverridden(): boolean {
-    return this.baseURL !== 'http://localhost:54321';
+    return this.baseURL !== 'https://api.example.com';
   }
 
   protected defaultQuery(): Record<string, string | undefined> | undefined {
@@ -247,7 +225,23 @@ export class Neocode {
   }
 
   protected validateHeaders({ values, nulls }: NullableHeaders) {
-    return;
+    if (this.apiKey && values.get('authorization')) {
+      return;
+    }
+    if (nulls.has('authorization')) {
+      return;
+    }
+
+    throw new Error(
+      'Could not resolve authentication method. Expected the apiKey to be set. Or for the "Authorization" headers to be explicitly omitted',
+    );
+  }
+
+  protected async authHeaders(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
+    if (this.apiKey == null) {
+      return undefined;
+    }
+    return buildHeaders([{ Authorization: `Bearer ${this.apiKey}` }]);
   }
 
   /**
@@ -408,7 +402,7 @@ export class Neocode {
     const response = await this.fetchWithTimeout(url, req, timeout, controller).catch(castToError);
     const headersTime = Date.now();
 
-    if (response instanceof Error) {
+    if (response instanceof globalThis.Error) {
       const retryMessage = `retrying, ${retriesRemaining} attempts remaining`;
       if (options.signal?.aborted) {
         throw new Errors.APIUserAbortError();
@@ -687,6 +681,7 @@ export class Neocode {
         ...(options.timeout ? { 'X-Stainless-Timeout': String(Math.trunc(options.timeout / 1000)) } : {}),
         ...getPlatformHeaders(),
       },
+      await this.authHeaders(options),
       this._options.defaultHeaders,
       bodyHeaders,
       options.headers,
@@ -714,7 +709,7 @@ export class Neocode {
         // Preserve legacy string encoding behavior for now
         headers.values.has('content-type')) ||
       // `Blob` is superset of `File`
-      body instanceof Blob ||
+      ((globalThis as any).Blob && body instanceof (globalThis as any).Blob) ||
       // `FormData` -> `multipart/form-data`
       body instanceof FormData ||
       // `URLSearchParams` -> `application/x-www-form-urlencoded`
@@ -725,11 +720,8 @@ export class Neocode {
       return { bodyHeaders: undefined, body: body as BodyInit };
     } else if (
       typeof body === 'object' &&
-      body !== null &&
-      ((typeof Symbol !== 'undefined' &&
-        typeof Symbol.asyncIterator === 'symbol' &&
-        Symbol.asyncIterator in body) ||
-        (typeof Symbol !== 'undefined' && typeof Symbol.iterator === 'symbol' && Symbol.iterator in body))
+      (Symbol.asyncIterator in body ||
+        (Symbol.iterator in body && 'next' in body && typeof body.next === 'function'))
     ) {
       return { bodyHeaders: undefined, body: Shims.ReadableStreamFrom(body as AsyncIterable<Uint8Array>) };
     } else {
@@ -757,100 +749,78 @@ export class Neocode {
   static toFile = Uploads.toFile;
 
   event: API.Event = new API.Event(this);
-  app: API.AppResource = new API.AppResource(this);
-  find: API.Find = new API.Find(this);
-  file: API.FileResource = new API.FileResource(this);
-  config: API.ConfigResource = new API.ConfigResource(this);
+  app: API.App = new API.App(this);
+  config: API.Config = new API.Config(this);
   session: API.SessionResource = new API.SessionResource(this);
+  find: API.Find = new API.Find(this);
+  file: API.File = new API.File(this);
+  log: API.Log = new API.Log(this);
+  mode: API.Mode = new API.Mode(this);
   tui: API.Tui = new API.Tui(this);
 }
+
 Neocode.Event = Event;
-Neocode.AppResource = AppResource;
-Neocode.Find = Find;
-Neocode.FileResource = FileResource;
-Neocode.ConfigResource = ConfigResource;
+Neocode.App = App;
+Neocode.Config = Config;
 Neocode.SessionResource = SessionResource;
+Neocode.Find = Find;
+Neocode.File = File;
+Neocode.Log = Log;
+Neocode.Mode = Mode;
 Neocode.Tui = Tui;
+
 export declare namespace Neocode {
   export type RequestOptions = Opts.RequestOptions;
 
   export { Event as Event, type EventListResponse as EventListResponse };
 
   export {
-    AppResource as AppResource,
-    type App as App,
-    type Mode as Mode,
-    type Model as Model,
-    type Provider as Provider,
-    type AppInitResponse as AppInitResponse,
-    type AppLogResponse as AppLogResponse,
-    type AppModesResponse as AppModesResponse,
-    type AppProvidersResponse as AppProvidersResponse,
-    type AppLogParams as AppLogParams,
+    App as App,
+    type AppRetrieveResponse as AppRetrieveResponse,
+    type AppInitializeResponse as AppInitializeResponse,
   };
 
   export {
-    Find as Find,
-    type Symbol as Symbol,
-    type FindFilesResponse as FindFilesResponse,
-    type FindSymbolsResponse as FindSymbolsResponse,
-    type FindTextResponse as FindTextResponse,
-    type FindFilesParams as FindFilesParams,
-    type FindSymbolsParams as FindSymbolsParams,
-    type FindTextParams as FindTextParams,
-  };
-
-  export {
-    FileResource as FileResource,
-    type File as File,
-    type FileReadResponse as FileReadResponse,
-    type FileStatusResponse as FileStatusResponse,
-    type FileReadParams as FileReadParams,
-  };
-
-  export {
-    ConfigResource as ConfigResource,
-    type Config as Config,
-    type KeybindsConfig as KeybindsConfig,
-    type McpLocalConfig as McpLocalConfig,
-    type McpRemoteConfig as McpRemoteConfig,
+    Config as Config,
     type ModeConfig as ModeConfig,
+    type ConfigRetrieveResponse as ConfigRetrieveResponse,
+    type ConfigListProvidersResponse as ConfigListProvidersResponse,
   };
 
   export {
     SessionResource as SessionResource,
-    type AssistantMessage as AssistantMessage,
-    type FilePart as FilePart,
-    type FilePartInput as FilePartInput,
-    type FilePartSource as FilePartSource,
-    type FilePartSourceText as FilePartSourceText,
-    type FileSource as FileSource,
-    type Message as Message,
-    type Part as Part,
     type Session as Session,
-    type SnapshotPart as SnapshotPart,
-    type StepFinishPart as StepFinishPart,
-    type StepStartPart as StepStartPart,
-    type SymbolSource as SymbolSource,
-    type TextPart as TextPart,
-    type TextPartInput as TextPartInput,
-    type ToolPart as ToolPart,
-    type ToolStateCompleted as ToolStateCompleted,
-    type ToolStateError as ToolStateError,
-    type ToolStatePending as ToolStatePending,
-    type ToolStateRunning as ToolStateRunning,
-    type UserMessage as UserMessage,
     type SessionListResponse as SessionListResponse,
     type SessionDeleteResponse as SessionDeleteResponse,
     type SessionAbortResponse as SessionAbortResponse,
     type SessionInitResponse as SessionInitResponse,
-    type SessionMessagesResponse as SessionMessagesResponse,
     type SessionSummarizeResponse as SessionSummarizeResponse,
-    type SessionChatParams as SessionChatParams,
     type SessionInitParams as SessionInitParams,
     type SessionRevertParams as SessionRevertParams,
     type SessionSummarizeParams as SessionSummarizeParams,
   };
+
+  export {
+    Find as Find,
+    type Range as Range,
+    type FindRetrieveResponse as FindRetrieveResponse,
+    type FindRetrieveFileResponse as FindRetrieveFileResponse,
+    type FindRetrieveSymbolResponse as FindRetrieveSymbolResponse,
+    type FindRetrieveParams as FindRetrieveParams,
+    type FindRetrieveFileParams as FindRetrieveFileParams,
+    type FindRetrieveSymbolParams as FindRetrieveSymbolParams,
+  };
+
+  export {
+    File as File,
+    type FileRetrieveResponse as FileRetrieveResponse,
+    type FileRetrieveStatusResponse as FileRetrieveStatusResponse,
+    type FileRetrieveParams as FileRetrieveParams,
+  };
+
+  export { Log as Log, type LogCreateResponse as LogCreateResponse, type LogCreateParams as LogCreateParams };
+
+  export { Mode as Mode, type ModeListResponse as ModeListResponse };
 
   export {
     Tui as Tui,
@@ -858,8 +828,4 @@ export declare namespace Neocode {
     type TuiOpenHelpResponse as TuiOpenHelpResponse,
     type TuiAppendPromptParams as TuiAppendPromptParams,
   };
-
-  export type MessageAbortedError = API.MessageAbortedError;
-  export type ProviderAuthError = API.ProviderAuthError;
-  export type UnknownError = API.UnknownError;
 }
