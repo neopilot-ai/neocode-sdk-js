@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.1 (2026-02-03)
+
+Full Changelog: [v0.2.0...v0.2.1](https://github.com/neopilot-ai/neocode-sdk-js/compare/v0.2.0...v0.2.1)
+
+### Bug Fixes
+
+* **client:** avoid memory leak with abort signals ([fefbdf7](https://github.com/neopilot-ai/neocode-sdk-js/commit/fefbdf72b78e57868f6e11c2ebccdebc1eb5eb44))
+
 ## 0.2.0 (2026-02-02)
 
 Full Changelog: [v0.1.3...v0.2.0](https://github.com/neopilot-ai/neocode-sdk-js/compare/v0.1.3...v0.2.0)
