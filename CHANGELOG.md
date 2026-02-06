@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.2 (2026-02-06)
+
+Full Changelog: [v0.2.1...v0.2.2](https://github.com/neopilot-ai/neocode-sdk-js/compare/v0.2.1...v0.2.2)
+
+### Bug Fixes
+
+* **client:** avoid removing abort listener too early ([2086c45](https://github.com/neopilot-ai/neocode-sdk-js/commit/2086c45cd3a39657e9f93cef9d2c8b1640942dbc))
+
+
+### Chores
+
+* **client:** do not parse responses with empty content-length ([c25448e](https://github.com/neopilot-ai/neocode-sdk-js/commit/c25448e87bcd828356adb0e1b03bf99bfa403eca))
+* **client:** restructure abort controller binding ([fc036af](https://github.com/neopilot-ai/neocode-sdk-js/commit/fc036af8803731c3a2709602563e4d073575e2cc))
+
 ## 0.2.1 (2026-02-03)
 
 Full Changelog: [v0.2.0...v0.2.1](https://github.com/neopilot-ai/neocode-sdk-js/compare/v0.2.0...v0.2.1)
