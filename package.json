@@ -1,6 +1,6 @@
 {
   "name": "neocode",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "The official TypeScript library for the Neocode API",
   "author": "Neocode <>",
   "types": "dist/index.d.ts",
