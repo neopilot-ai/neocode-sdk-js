@@ -8,7 +8,7 @@ const client = new Neocode({
 });
 
 describe('resource file', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieve: only required params', async () => {
     const responsePromise = client.file.retrieve({ path: 'path' });
     const rawResponse = await responsePromise.asResponse();
@@ -20,12 +20,12 @@ describe('resource file', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieve: required and optional params', async () => {
     const response = await client.file.retrieve({ path: 'path' });
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieveStatus', async () => {
     const responsePromise = client.file.retrieveStatus();
     const rawResponse = await responsePromise.asResponse();

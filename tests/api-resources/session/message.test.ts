@@ -8,7 +8,7 @@ const client = new Neocode({
 });
 
 describe('resource message', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('create: only required params', async () => {
     const responsePromise = client.session.message.create('id', {
       modelID: 'modelID',
@@ -24,7 +24,7 @@ describe('resource message', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
     const response = await client.session.message.create('id', {
       modelID: 'modelID',
@@ -45,7 +45,7 @@ describe('resource message', () => {
     });
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('list', async () => {
     const responsePromise = client.session.message.list('id');
     const rawResponse = await responsePromise.asResponse();
