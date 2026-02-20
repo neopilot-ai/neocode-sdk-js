@@ -8,7 +8,7 @@ const client = new Neocode({
 });
 
 describe('resource find', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieve: only required params', async () => {
     const responsePromise = client.find.retrieve({ pattern: 'pattern' });
     const rawResponse = await responsePromise.asResponse();
@@ -20,12 +20,12 @@ describe('resource find', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieve: required and optional params', async () => {
     const response = await client.find.retrieve({ pattern: 'pattern' });
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieveFile: only required params', async () => {
     const responsePromise = client.find.retrieveFile({ query: 'query' });
     const rawResponse = await responsePromise.asResponse();
@@ -37,12 +37,12 @@ describe('resource find', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieveFile: required and optional params', async () => {
     const response = await client.find.retrieveFile({ query: 'query' });
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieveSymbol: only required params', async () => {
     const responsePromise = client.find.retrieveSymbol({ query: 'query' });
     const rawResponse = await responsePromise.asResponse();
@@ -54,7 +54,7 @@ describe('resource find', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieveSymbol: required and optional params', async () => {
     const response = await client.find.retrieveSymbol({ query: 'query' });
   });

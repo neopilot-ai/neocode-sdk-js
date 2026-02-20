@@ -8,7 +8,7 @@ const client = new Neocode({
 });
 
 describe('resource config', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('retrieve', async () => {
     const responsePromise = client.config.retrieve();
     const rawResponse = await responsePromise.asResponse();
@@ -20,7 +20,7 @@ describe('resource config', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('listProviders', async () => {
     const responsePromise = client.config.listProviders();
     const rawResponse = await responsePromise.asResponse();

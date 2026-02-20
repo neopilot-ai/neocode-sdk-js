@@ -8,7 +8,7 @@ const client = new Neocode({
 });
 
 describe('resource log', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('create: only required params', async () => {
     const responsePromise = client.log.create({
       level: 'debug',
@@ -24,7 +24,7 @@ describe('resource log', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
     const response = await client.log.create({
       level: 'debug',
