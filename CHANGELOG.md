@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.3 (2026-02-20)
+
+Full Changelog: [v0.2.2...v0.2.3](https://github.com/neopilot-ai/neocode-sdk-js/compare/v0.2.2...v0.2.3)
+
+### Chores
+
+* **internal/client:** fix form-urlencoded requests ([1fc688d](https://github.com/neopilot-ai/neocode-sdk-js/commit/1fc688d8019ff6acdc1beaacb2c53e6c995b8bad))
+* **internal:** avoid type checking errors with ts-reset ([dfbfd76](https://github.com/neopilot-ai/neocode-sdk-js/commit/dfbfd765bb581dfc8c6e0770be8c05efce5b9f27))
+* **internal:** remove mock server code ([13b71ec](https://github.com/neopilot-ai/neocode-sdk-js/commit/13b71ec90478344c7870f5e7af1848d4800ecf88))
+* **internal:** upgrade pnpm ([71cee0a](https://github.com/neopilot-ai/neocode-sdk-js/commit/71cee0aa56e035092096f439f1107d7dc557f1d0))
+* update mock server docs ([24f73cf](https://github.com/neopilot-ai/neocode-sdk-js/commit/24f73cfaec4f74af90e1c4cb79cb5ad566430386))
+
 ## 0.2.2 (2026-02-06)
 
 Full Changelog: [v0.2.1...v0.2.2](https://github.com/neopilot-ai/neocode-sdk-js/compare/v0.2.1...v0.2.2)
