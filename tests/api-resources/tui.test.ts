@@ -8,7 +8,7 @@ const client = new Neocode({
 });
 
 describe('resource tui', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('appendPrompt: only required params', async () => {
     const responsePromise = client.tui.appendPrompt({ text: 'text' });
     const rawResponse = await responsePromise.asResponse();
@@ -20,12 +20,12 @@ describe('resource tui', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('appendPrompt: required and optional params', async () => {
     const response = await client.tui.appendPrompt({ text: 'text' });
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('openHelp', async () => {
     const responsePromise = client.tui.openHelp();
     const rawResponse = await responsePromise.asResponse();
