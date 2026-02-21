@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.1.0-alpha.22 (2026-02-21)
+
+Full Changelog: [v0.1.0-alpha.21...v0.1.0-alpha.22](https://github.com/neopilot-ai/neocode-sdk-js/compare/v0.1.0-alpha.21...v0.1.0-alpha.22)
+
+### Features
+
+* **api:** api update ([b2c713f](https://github.com/neopilot-ai/neocode-sdk-js/commit/b2c713f66c51f56c0c0406dcebd39e9165c0a3bc))
+
+
+### Bug Fixes
+
+* **client:** avoid memory leak with abort signals ([ad0e118](https://github.com/neopilot-ai/neocode-sdk-js/commit/ad0e118db372ce35730c35acb8e2aaaefbceb471))
+* **client:** avoid removing abort listener too early ([276670d](https://github.com/neopilot-ai/neocode-sdk-js/commit/276670d0c1e56c959dfa4dce7b4d54d39a7217ca))
+* **client:** guard Symbol.asyncIterator for non-supporting runtimes ([7bdc9d6](https://github.com/neopilot-ai/neocode-sdk-js/commit/7bdc9d68887dc85ff67442537c5c164ea11e7714))
+* **client:** guard Symbol.asyncIterator for non-supporting runtimes ([1d9b3ec](https://github.com/neopilot-ai/neocode-sdk-js/commit/1d9b3ecfd3d8883c534efcdd57280624fda33933))
+* **client:** guard Symbol.asyncIterator for non-supporting runtimes ([abdf1f4](https://github.com/neopilot-ai/neocode-sdk-js/commit/abdf1f47ce08002ca0412d41f97d81803cec361e))
+
+
+### Chores
+
+* **client:** do not parse responses with empty content-length ([9170c52](https://github.com/neopilot-ai/neocode-sdk-js/commit/9170c52f4169d2aabc10a5021d52f942487f3cae))
+* **client:** restructure abort controller binding ([2f38a0e](https://github.com/neopilot-ai/neocode-sdk-js/commit/2f38a0e842c54113134c3d2d43768ba9c9897f9f))
+* **internal/client:** fix form-urlencoded requests ([1fc688d](https://github.com/neopilot-ai/neocode-sdk-js/commit/1fc688d8019ff6acdc1beaacb2c53e6c995b8bad))
+* **internal:** avoid type checking errors with ts-reset ([dfbfd76](https://github.com/neopilot-ai/neocode-sdk-js/commit/dfbfd765bb581dfc8c6e0770be8c05efce5b9f27))
+* **internal:** remove mock server code ([13b71ec](https://github.com/neopilot-ai/neocode-sdk-js/commit/13b71ec90478344c7870f5e7af1848d4800ecf88))
+* **internal:** upgrade pnpm ([71cee0a](https://github.com/neopilot-ai/neocode-sdk-js/commit/71cee0aa56e035092096f439f1107d7dc557f1d0))
+* remove custom code ([7e755ee](https://github.com/neopilot-ai/neocode-sdk-js/commit/7e755ee30278b3570b36b8f574c6c948b35ab407))
+* update mock server docs ([24f73cf](https://github.com/neopilot-ai/neocode-sdk-js/commit/24f73cfaec4f74af90e1c4cb79cb5ad566430386))
+
 ## 0.1.0-alpha.21 (2025-07-28)
 
 Full Changelog: [v0.1.0-alpha.20...v0.1.0-alpha.21](https://github.com/neopilot-ai/neocode-sdk-js/compare/v0.1.0-alpha.20...v0.1.0-alpha.21)
