@@ -5,8 +5,8 @@
   "compilerOptions": {
     "rootDir": "./dist/src",
     "paths": {
-      "neocode/*": ["./dist/src/*"],
-      "neocode": ["./dist/src/index.ts"]
+      "@neocode-ai/sdk/*": ["dist/src/*"],
+      "@neocode-ai/sdk": ["dist/src/index.ts"]
     },
     "noEmit": false,
     "declaration": true,

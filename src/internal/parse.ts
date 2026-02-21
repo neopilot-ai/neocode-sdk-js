@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import type { FinalRequestOptions } from './request-options';
+import { Stream } from '../core/streaming';
 import { type Neocode } from '../client';
 import { formatRequestDetails, loggerFor } from './utils/log';
 
@@ -16,6 +17,19 @@ export type APIResponseProps = {
 export async function defaultParseResponse<T>(client: Neocode, props: APIResponseProps): Promise<T> {
   const { response, requestLogID, retryOfRequestLogID, startTime } = props;
   const body = await (async () => {
+    if (props.options.stream) {
+      loggerFor(client).debug('response', response.status, response.url, response.headers, response.body);
+
+      // Note: there is an invariant here that isn't represented in the type system
+      // that if you set `stream: true` the response type must also be `Stream<T>`
+
+      if (props.options.__streamClass) {
+        return props.options.__streamClass.fromSSEResponse(response, props.controller, client) as any;
+      }
+
+      return Stream.fromSSEResponse(response, props.controller, client) as any;
+    }
+
     // fetch refuses to read the body when the status code is 204.
     if (response.status === 204) {
       return null as T;
@@ -29,12 +43,6 @@ export async function defaultParseResponse<T>(client: Neocode, props: APIRespons
     const mediaType = contentType?.split(';')[0]?.trim();
     const isJSON = mediaType?.includes('application/json') || mediaType?.endsWith('+json');
     if (isJSON) {
-      const contentLength = response.headers.get('content-length');
-      if (contentLength === '0') {
-        // if there is no content we can't do anything
-        return undefined as T;
-      }
-
       const json = await response.json();
       return json as T;
     }

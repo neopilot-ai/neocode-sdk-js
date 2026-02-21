@@ -1,6 +1,6 @@
 import fs from 'fs';
-import type { ResponseLike } from 'neocode/internal/to-file';
-import { toFile } from 'neocode/core/uploads';
+import type { ResponseLike } from '@neocode-ai/sdk/internal/to-file';
+import { toFile } from '@neocode-ai/sdk/core/uploads';
 import { File } from 'node:buffer';
 
 class MyClass {
@@ -69,7 +69,7 @@ describe('toFile', () => {
     const result = await toFile(input);
     const file: File = result;
     const blob: Blob = result;
-    void file, blob;
+    (void file, blob);
   });
 });
 
@@ -97,7 +97,7 @@ describe('missing File error message', () => {
   });
 
   test('is thrown', async () => {
-    const uploads = await import('neocode/core/uploads');
+    const uploads = await import('@neocode-ai/sdk/core/uploads');
     await expect(
       uploads.toFile(mockResponse({ url: 'https://example.com/my/audio.mp3' })),
     ).rejects.toMatchInlineSnapshot(

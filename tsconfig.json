@@ -7,9 +7,10 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "baseUrl": "./",
     "paths": {
-      "neocode/*": ["./src/*"],
-      "neocode": ["./src/index.ts"]
+      "@neocode-ai/sdk/*": ["src/*"],
+      "@neocode-ai/sdk": ["src/index.ts"]
     },
     "noEmit": true,
 

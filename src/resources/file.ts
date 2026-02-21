@@ -4,50 +4,49 @@ import { APIResource } from '../core/resource';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 
-export class File extends APIResource {
+export class FileResource extends APIResource {
   /**
    * Read a file
    */
-  retrieve(query: FileRetrieveParams, options?: RequestOptions): APIPromise<FileRetrieveResponse> {
+  read(query: FileReadParams, options?: RequestOptions): APIPromise<FileReadResponse> {
     return this._client.get('/file', { query, ...options });
   }
 
   /**
    * Get file status
    */
-  retrieveStatus(options?: RequestOptions): APIPromise<FileRetrieveStatusResponse> {
+  status(options?: RequestOptions): APIPromise<FileStatusResponse> {
     return this._client.get('/file/status', options);
   }
 }
 
-export interface FileRetrieveResponse {
+export interface File {
+  added: number;
+
+  path: string;
+
+  removed: number;
+
+  status: 'added' | 'deleted' | 'modified';
+}
+
+export interface FileReadResponse {
   content: string;
 
   type: 'raw' | 'patch';
 }
 
-export type FileRetrieveStatusResponse = Array<FileRetrieveStatusResponse.FileRetrieveStatusResponseItem>;
+export type FileStatusResponse = Array<File>;
 
-export namespace FileRetrieveStatusResponse {
-  export interface FileRetrieveStatusResponseItem {
-    added: number;
-
-    path: string;
-
-    removed: number;
-
-    status: 'added' | 'deleted' | 'modified';
-  }
-}
-
-export interface FileRetrieveParams {
+export interface FileReadParams {
   path: string;
 }
 
-export declare namespace File {
+export declare namespace FileResource {
   export {
-    type FileRetrieveResponse as FileRetrieveResponse,
-    type FileRetrieveStatusResponse as FileRetrieveStatusResponse,
-    type FileRetrieveParams as FileRetrieveParams,
+    type File as File,
+    type FileReadResponse as FileReadResponse,
+    type FileStatusResponse as FileStatusResponse,
+    type FileReadParams as FileReadParams,
   };
 }
